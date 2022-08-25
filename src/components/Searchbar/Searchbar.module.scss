@@ -18,16 +18,21 @@
 }
 
 .SearchForm {
+  position: relative;
+  height: 40px;
   display: flex;
   align-items: center;
   width: 100%;
-  max-width: 600px;
+  max-width: 550px;
+  padding-left: 20px;
   background-color: #fff;
   border-radius: 3px;
   overflow: hidden;
 }
 
 .SearchForm_button {
+  position: absolute;
+  left: 503px;
   display: inline-block;
   width: 48px;
   height: 48px;
@@ -55,6 +60,10 @@
   white-space: nowrap;
   clip-path: inset(50%);
   border: 0;
+}
+
+.react-icons {
+  width: 20px;
 }
 
 .SearchForm_input {
