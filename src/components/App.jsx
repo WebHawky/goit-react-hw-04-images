@@ -7,7 +7,7 @@ export default function App() {
   const [galleryCollection, setGalleryCollection] = useState(null);
   const [searchPhotoName, setSearchPhotoName] = useState('');
   const [page, setPage] = useState(1);
-  const [error, setError] = useState('');
+  const [setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectImageURL, setSelectImageURL] = useState('');
@@ -35,7 +35,7 @@ export default function App() {
       };
       fetchGallery(searchPhotoName, page);
     }
-  }, [page, searchPhotoName]);
+  }, [page, prevSearchedPhoto, searchPhotoName, setError]);
 
   const submitHandler = inputPhotoName => {
     setPrevSearchedPhoto(searchPhotoName);
