@@ -22,13 +22,13 @@ export default function Searchbar({ onSubmit }) {
     }
 
     onSubmit(searchPhotoName);
-    searchPhotoName('');
+    setSearchPhotoName('');
   };
 
   return (
     <>
-      <header className={s.Searchbar} onSubmit={handleSubmit}>
-        <form className={s.SearchForm}>
+      <header className={s.Searchbar}>
+        <form className={s.SearchForm} onSubmit={handleSubmit}>
           <button type="submit" className={s.SearchForm_button}>
             <FcSearch size={28} />
             <span className={s.SearchForm_button_label}>Search</span>
