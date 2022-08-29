@@ -1,94 +1,78 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 
 import { Button, ImageGallery, Loader, Modal, Searchbar, Api } from './index';
 import s from '../styles.css';
 
-export default class App extends Component {
-  state = {
-    galleryCollection: null,
-    searchPhotoName: '',
-    page: 1,
-    error: '',
-    loading: false,
-    showModal: false,
-    selectImageURL: '',
-  };
+export default function App() {
+  const [galleryCollection, setGalleryCollection] = useState(null);
+  const [searchPhotoName, setSearchPhotoName] = useState('');
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectImageURL, setSelectImageURL] = useState('');
+  const [prevSearchedPhoto, setPrevSearchedPhoto] = useState('');
 
-  componentDidUpdate(_, prevState) {
-    const prevPhotoName = prevState.searchPhotoName;
-    const prevPage = prevState.page;
-    const { searchPhotoName, page } = this.state;
-
-    if (prevPhotoName !== searchPhotoName) {
-      this.setState({ page: 1 });
+  useEffect(() => {
+    setPrevSearchedPhoto(searchPhotoName);
+    if (searchPhotoName) {
+      const fetchGallery = async () => {
+        try {
+          setLoading(true);
+          const response = await Api.galleryFetch(searchPhotoName, page);
+          if (searchPhotoName !== prevSearchedPhoto && page !== 1) {
+            setPage(1);
+          } else if (page !== 1) {
+            setGalleryCollection(prevState => [...prevState, ...response]);
+          } else {
+            setGalleryCollection(response);
+          }
+        } catch (error) {
+          setError(error.message);
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchGallery(searchPhotoName, page);
     }
-    if (prevPhotoName !== searchPhotoName || prevPage !== page) {
-      this.fetchGallery(searchPhotoName, page);
-    }
-  }
+  }, [page, searchPhotoName]);
 
-  async fetchGallery(searchPhotoName, page) {
-    try {
-      this.setState({ loading: true });
-      const response = await Api.galleryFetch(searchPhotoName, page);
-      if (page !== 1) {
-        this.setState(prevState => ({
-          galleryCollection: [...prevState.galleryCollection, ...response],
-        }));
-      } else {
-        this.setState({ galleryCollection: response });
-      }
-    } catch (error) {
-      this.setState({ error: error.message });
-    } finally {
-      this.setState({ loading: false });
-    }
-  }
-
-  submitHandler = searchPhotoName => {
-    this.setState({ searchPhotoName });
+  const submitHandler = inputPhotoName => {
+    setPrevSearchedPhoto(searchPhotoName);
+    setSearchPhotoName(inputPhotoName);
   };
 
-  handlerLoadMore = () => {
-    this.setState(prevState => ({
-      page: prevState.page + 1,
-    }));
+  const handlerLoadMore = () => {
+    setPage(page + 1);
   };
 
-  handlerSearchURL = photoURL => {
-    this.setState({ selectImageURL: photoURL });
+  const handlerSearchURL = photoURL => {
+    setSelectImageURL(photoURL);
 
-    this.setState({ showModal: true });
+    setShowModal(true);
   };
 
-  closeModalWindow = () => {
-    this.setState({ showModal: false });
+  const closeModalWindow = () => {
+    setShowModal(false);
   };
 
-  render() {
-    const { galleryCollection, selectImageURL, showModal } = this.state;
-
-    return (
-      <div className={s.App}>
-        <Searchbar className={s.Searchbar} onSubmit={this.submitHandler} />
-        {this.state.loading && <Loader />}
-        {galleryCollection && (
-          <ImageGallery
-            onClick={this.handlerSearchURL}
-            className={s.ImageGallery}
-            collections={galleryCollection}
-          />
-        )}
-        {galleryCollection !== null && galleryCollection.length > '0' && (
-          <Button fetchHandler={this.handlerLoadMore} />
-        )}
-        {showModal && (
-          <Modal
-            onClose={this.closeModalWindow}
-            selectedPhotoUrl={selectImageURL}
-          />
-        )}
-      </div>
-    );
-  }
+  return (
+    <div className={s.App}>
+      <Searchbar className={s.Searchbar} onSubmit={submitHandler} />
+      {loading && <Loader />}
+      {galleryCollection && (
+        <ImageGallery
+          onClick={handlerSearchURL}
+          className={s.ImageGallery}
+          collections={galleryCollection}
+        />
+      )}
+      {galleryCollection !== null && galleryCollection.length > '0' && (
+        <Button fetchHandler={handlerLoadMore} />
+      )}
+      {showModal && (
+        <Modal onClose={closeModalWindow} selectedPhotoUrl={selectImageURL} />
+      )}
+    </div>
+  );
 }
