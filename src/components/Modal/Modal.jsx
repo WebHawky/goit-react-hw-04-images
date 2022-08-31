@@ -1,39 +1,38 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import s from './Modal.module.scss';
 
-export default class Modal extends Component {
-  componentDidMount() {
-    window.addEventListener('keydown', this.closeModal);
-  }
+export default function Modal({ onClose, selectedPhotoUrl }) {
+  useEffect(() => {
+    window.addEventListener('keydown', closeModal);
+  });
 
-  componentWillUnmount() {
-    window.removeEventListener('keydown', this.closeModal);
-  }
+  useEffect(() => {
+    return () => {
+      window.removeEventListener('keydown', closeModal);
+    };
+    // eslint-disable-next-line no-use-before-define, react-hooks/exhaustive-deps
+  }, []);
 
-  closeModal = e => {
+  const closeModal = e => {
     if (e.code === 'Escape') {
-      this.props.onClose();
+      onClose();
     }
   };
 
-  onClick = e => {
+  const onClick = e => {
     if (e.target === e.currentTarget) {
-      this.props.onClose();
+      onClose();
     }
   };
 
-  render() {
-    const { selectedPhotoUrl } = this.props;
-
-    return (
-      <div className={s.Overlay} onClick={this.onClick}>
-        <div className={s.Modal}>
-          <img src={selectedPhotoUrl} alt={selectedPhotoUrl} />
-        </div>
+  return (
+    <div className={s.Overlay} onClick={onClick}>
+      <div className={s.Modal}>
+        <img src={selectedPhotoUrl} alt={selectedPhotoUrl} />
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 Modal.propTypes = {
