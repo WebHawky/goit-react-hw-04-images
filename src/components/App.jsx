@@ -7,7 +7,8 @@ export default function App() {
   const [galleryCollection, setGalleryCollection] = useState(null);
   const [searchPhotoName, setSearchPhotoName] = useState('');
   const [page, setPage] = useState(1);
-  const [setError] = useState('');
+  // eslint-disable-next-line no-unused-vars
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectImageURL, setSelectImageURL] = useState('');
@@ -35,7 +36,8 @@ export default function App() {
       };
       fetchGallery(searchPhotoName, page);
     }
-  }, [page, prevSearchedPhoto, searchPhotoName, setError]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, searchPhotoName]);
 
   const submitHandler = inputPhotoName => {
     setPrevSearchedPhoto(searchPhotoName);

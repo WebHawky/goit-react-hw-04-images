@@ -11,7 +11,7 @@ export default function Modal({ onClose, selectedPhotoUrl }) {
     return () => {
       window.removeEventListener('keydown', closeModal);
     };
-    // eslint-disable-next-line no-use-before-define, react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const closeModal = e => {
